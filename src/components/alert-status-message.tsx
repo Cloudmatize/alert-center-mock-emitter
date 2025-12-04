@@ -23,14 +23,14 @@ export function AlertStatusMessage({
         <div className="flex items-center gap-2">
           <CheckCircle2 className={`h-5 w-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
           <p className={`font-medium ${darkMode ? 'text-green-300' : 'text-green-800'}`}>
-            Alerta {testMode ? 'simulado' : 'enviado'} com sucesso!
+            Alerta enviado com sucesso!
           </p>
         </div>
         {testMode && (
           <div className="flex items-center gap-2 mt-2">
             <FlaskConical className={`h-4 w-4 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
             <p className={`text-sm ${darkMode ? 'text-green-400' : 'text-green-700'}`}>
-              Modo de teste ativo - nenhuma requisição foi enviada
+              Modo teste: notificação em tempo real ativada
             </p>
           </div>
         )}

@@ -56,6 +56,11 @@ Crie um arquivo `.env` na raiz:
 
 ```env
 VITE_API_ENDPOINT=https://api.go.tasks-publisher.dev.4smartcloud.com/tasks
+
+# Notificações Novu (Opcional)
+# VITE_NOVU_APP_ID=your-app-id
+# VITE_NOVU_AUTH_TOKEN=your-token
+# VITE_NOVU_DEVELOPMENT=true
 ```
 
 O endpoint pode ser alterado na interface e será salvo no localStorage.
@@ -63,6 +68,35 @@ O endpoint pode ser alterado na interface e será salvo no localStorage.
 ### Modo de Teste
 
 Ative o "Modo de Teste" para simular envios sem fazer requisições HTTP reais.
+
+### 🔔 Notificações em Tempo Real (Opcional)
+
+O projeto inclui suporte para notificações via **Novu**. 
+
+**Como usar:**
+1. Configure as variáveis no `.env`:
+   ```env
+   VITE_NOVU_APP_ID=seu-application-identifier
+   VITE_NOVU_AUTH_TOKEN=seu-jwt-token
+   VITE_NOVU_DEVELOPMENT=true
+   ```
+2. Reinicie o servidor: `npm run dev`
+3. Pop-ups de notificação aparecerão automaticamente no canto superior direito
+
+**Como funciona:**
+```tsx
+// O hook conecta automaticamente ao Novu via WebSocket
+useNovuPopupListener({
+  applicationIdentifier: 'SEU_APP_ID',
+  authToken: 'SEU_TOKEN',
+  enabled: true  // Ativa/desativa listener
+});
+
+// Quando uma notificação chega:
+// 1. SDK Novu recebe via WebSocket
+// 2. Hook processa o payload
+// 3. toast.info() exibe pop-up automaticamente
+```
 
 ## 📡 Formato do Payload (Alertas de Vídeo)
 

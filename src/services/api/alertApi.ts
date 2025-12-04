@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 import type { AlertPayload, AlertResponse, AlertType } from '@/types/alert.types';
-import { getTestMode } from '@/lib/utils';
 
 const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 
@@ -13,8 +12,6 @@ const apiClient = axios.create({
 
 
 export const sendAlert = async (payload: AlertPayload, alertType: AlertType): Promise<AlertResponse> => {
-  const isTestMode = getTestMode();
-
   try {
     let requestBody;
 
@@ -22,6 +19,13 @@ export const sendAlert = async (payload: AlertPayload, alertType: AlertType): Pr
       requestBody = {
         toTable: 'irisity_events',
         taskSource: 'irisity',
+        payload: [payload],
+        actionOnDb: 'insert',
+      };
+    } else if (alertType === 'accident') {
+      requestBody = {
+        toTable: 'waze_alerts',
+        taskSource: 'waze',
         payload: [payload],
         actionOnDb: 'insert',
       };
@@ -37,16 +41,6 @@ export const sendAlert = async (payload: AlertPayload, alertType: AlertType): Pr
       message: 'Alert sent successfully',
     };
   } catch (error) {
-
-    if (isTestMode) {
-      console.log('[Alert API] Test mode active - simulating success');
-      return {
-        success: true,
-        message: 'Alert sent successfully (test mode)',
-        data: payload,
-      };
-    }
-
     if (error instanceof AxiosError) {
       throw new Error(
         error.response?.data?.message ||

@@ -5,11 +5,13 @@ import { AlertHeader } from '@/components/alert-header';
 import { EndpointConfig } from '@/components/endpoint-config';
 import { AlertTypeSelector } from '@/components/alert-type-selector';
 import { BehaviorTypeSelector } from '@/components/behavior-type-selector';
+import { AccidentSubtypeSelector } from '@/components/accident-subtype-selector';
 import { AlertStatusMessage } from '@/components/alert-status-message';
 import { PayloadDisplay } from '@/components/payload-display';
-import type { Location } from '@/types/alert.types';
+import type { Location, WazeAccidentPayload } from '@/types/alert.types';
 import { useAlertForm } from '@/hooks/user-alerts-form';
 import { useSendAlert } from '@/hooks/mutations/use-send-alerts';
+import { useNovuPopupListener } from '@/hooks/useNovuPopupListener';
 import { Button } from '@/components/ui/button';
 
 export default function AlertForm() {
@@ -18,6 +20,8 @@ export default function AlertForm() {
     setAlertType,
     behaviorType,
     setBehaviorType,
+    accidentSubtype,
+    setAccidentSubtype,
     endpointUrl,
     updateEndpointUrl,
     testMode,
@@ -29,8 +33,16 @@ export default function AlertForm() {
   const [showPayload, setShowPayload] = useState(false);
   const [lastPayload, setLastPayload] = useState<string>('');
   const [location, setLocation] = useState<Location | null>(null);
+  const [accident, setAccident] = useState<WazeAccidentPayload | null>(null);
   const [darkMode, setDarkMode] = useState(true);
   const [payloadKey, setPayloadKey] = useState(0);
+
+  useNovuPopupListener({
+    applicationIdentifier: import.meta.env.VITE_NOVU_APP_ID,
+    authToken: import.meta.env.VITE_NOVU_AUTH_TOKEN,
+    isDevelopment: import.meta.env.VITE_NOVU_DEVELOPMENT === 'true',
+    enabled: testMode && !!import.meta.env.VITE_NOVU_APP_ID && !!import.meta.env.VITE_NOVU_AUTH_TOKEN,
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +51,12 @@ export default function AlertForm() {
     setLastPayload(JSON.stringify(payload, null, 2));
     setPayloadKey(prev => prev + 1);
 
-    if ('location' in payload) {
-      setLocation(payload.location);
+    if ('geo' in payload) {
+      setAccident(payload as WazeAccidentPayload);
+      setLocation(null);
     } else {
       setLocation(null);
+      setAccident(null);
     }
 
     setShowPayload(true);
@@ -72,11 +86,19 @@ export default function AlertForm() {
                 onAlertTypeChange={setAlertType}
               />
 
-              <BehaviorTypeSelector
-                darkMode={darkMode}
-                behaviorType={behaviorType}
-                onBehaviorTypeChange={setBehaviorType}
-              />
+              {alertType === 'accident' ? (
+                <AccidentSubtypeSelector
+                  darkMode={darkMode}
+                  accidentSubtype={accidentSubtype}
+                  onAccidentSubtypeChange={setAccidentSubtype}
+                />
+              ) : (
+                <BehaviorTypeSelector
+                  darkMode={darkMode}
+                  behaviorType={behaviorType}
+                  onBehaviorTypeChange={setBehaviorType}
+                />
+              )}
 
               <Button
                 type="submit"
@@ -111,8 +133,8 @@ export default function AlertForm() {
             ? 'opacity-100 translate-x-0'
             : 'opacity-0 translate-x-8 pointer-events-none absolute'
             }`}>
-            {location && alertType !== 'video' && (
-              <AlertMap location={location} darkMode={darkMode} />
+            {(location || accident) && alertType !== 'video' && (
+              <AlertMap location={location || undefined} accident={accident || undefined} darkMode={darkMode} />
             )}
 
             {lastPayload && (

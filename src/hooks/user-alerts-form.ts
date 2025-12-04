@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { getStoredEndpoint, setStoredEndpoint, getTestMode, setTestMode } from '@/lib/utils';
-import type { AlertType, BehaviorType, NotificationChannel } from '@/types/alert.types';
+import type { AlertType, BehaviorType, NotificationChannel, AccidentSubtype } from '@/types/alert.types';
 import { generateMockAlert } from '@/services/mock-data-generator';
 
 export const useAlertForm = () => {
-  const [alertType, setAlertType] = useState<AlertType>('video');
+  const [alertType, setAlertType] = useState<AlertType>('accident');
   const [behaviorType, setBehaviorType] = useState<BehaviorType>('anomaly');
+  const [accidentSubtype, setAccidentSubtype] = useState<AccidentSubtype>('ACCIDENT_MINOR');
   const [channels, setChannels] = useState<NotificationChannel[]>(['platform']);
   const [endpointUrl, setEndpointUrl] = useState(getStoredEndpoint());
   const [testMode, setTestModeState] = useState(getTestMode());
@@ -29,7 +30,7 @@ export const useAlertForm = () => {
   };
 
   const generatePayload = () => {
-    return generateMockAlert(alertType, behaviorType, channels);
+    return generateMockAlert(alertType, behaviorType, accidentSubtype);
   };
 
   return {
@@ -37,6 +38,8 @@ export const useAlertForm = () => {
     setAlertType,
     behaviorType,
     setBehaviorType,
+    accidentSubtype,
+    setAccidentSubtype,
     channels,
     setChannels,
     toggleChannel,

@@ -1,5 +1,7 @@
 export type AlertType = 'traffic' | 'video' | 'accident';
 
+export type AccidentSubtype = 'ACCIDENT_MAJOR' | 'ACCIDENT_MINOR';
+
 export type BehaviorType =
   | 'anomaly'
   | 'asset_protection'
@@ -25,7 +27,28 @@ export interface Location {
   state?: string;
 }
 
-// Payload para alertas de vídeo (formato IrisPlus)
+export interface WazeAccidentPayload {
+  city: string;
+  confidence: number;
+  nThumbsUp: number;
+  street: string;
+  uuid: string;
+  country: string;
+  type: 'ACCIDENT';
+  subtype: AccidentSubtype;
+  roadType: number;
+  reliability: number;
+  magvar: number;
+  reportRating: number;
+  reportByMunicipalityUser: boolean;
+  pubMillis: number;
+  ts: number;
+  reportDescription: string;
+  geo: string;
+  blockingAlertUuid: string | null;
+  tsInsert: number;
+}
+
 export interface VideoAlertPayload {
   id: string;
   accountId: string;
@@ -43,19 +66,7 @@ export interface VideoAlertPayload {
   image: string;
 }
 
-// Payload para alertas de trânsito e acidente (com localização)
-export interface LocationAlertPayload {
-  alertType: AlertType;
-  behaviorType: BehaviorType;
-  notificationChannels: NotificationChannel[];
-  timestamp: string;
-  location: Location;
-  severity: Severity;
-  description: string;
-  metadata?: Record<string, any>;
-}
-
-export type AlertPayload = VideoAlertPayload | LocationAlertPayload;
+export type AlertPayload = VideoAlertPayload | WazeAccidentPayload;
 
 export interface AlertResponse {
   success: boolean;
@@ -73,10 +84,9 @@ export interface AlertHistoryItem {
   status: 'success' | 'error' | 'pending';
 }
 
-// Labels para exibição na UI
 export const ALERT_TYPE_LABELS: Record<AlertType, string> = {
-  video: 'Vídeo',
   traffic: 'Trânsito',
+  video: 'Vídeo',
   accident: 'Acidente',
 };
 
@@ -87,9 +97,9 @@ export const ALERT_TYPE_DESCRIPTIONS: Record<AlertType, string> = {
 };
 
 export const ALERT_TYPE_AVAILABLE: Record<AlertType, boolean> = {
-  video: true,
   traffic: false,
-  accident: false,
+  video: true,
+  accident: true,
 };
 
 export const BEHAVIOR_TYPE_LABELS: Record<BehaviorType, string> = {
@@ -104,6 +114,11 @@ export const BEHAVIOR_TYPE_LABELS: Record<BehaviorType, string> = {
   smoke_and_fire: 'Fumaça detectada',
   stopped_vehicle: 'Veículo parado',
   unattended_object: 'Objeto abandonado',
+};
+
+export const ACCIDENT_SUBTYPE_LABELS: Record<AccidentSubtype, string> = {
+  ACCIDENT_MAJOR: 'Acidente Grave',
+  ACCIDENT_MINOR: 'Acidente Leve',
 };
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> = {

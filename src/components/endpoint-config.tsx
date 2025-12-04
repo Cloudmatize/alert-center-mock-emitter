@@ -37,7 +37,7 @@ export function EndpointConfig({
             </Label>
           </div>
           <p className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-            Ativa para simular envios sem precisar de URL válida
+            Ativa o listener para receber e exibir notificações Novu na plataforma
           </p>
         </div>
         <Switch
@@ -58,13 +58,11 @@ export function EndpointConfig({
           onChange={(e) => onEndpointUrlChange(e.target.value)}
           placeholder="https://api.go.tasks-publisher.dev.4smartcloud.com/tasks"
           className={`mt-2 ${darkMode ? 'bg-gray-800 border-gray-700 text-white placeholder:text-gray-500' : ''}`}
-          disabled={testMode}
+          disabled
         />
-        {testMode && (
-          <p className={`text-xs mt-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-            URL desabilitada em modo de teste
-          </p>
-        )}
+        <p className={`text-xs mt-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+          URL configurada via variável de ambiente
+        </p>
       </div>
     </div>
   );

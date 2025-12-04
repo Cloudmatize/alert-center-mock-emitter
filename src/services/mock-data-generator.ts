@@ -1,13 +1,12 @@
 import { faker } from '@faker-js/faker';
-import type { 
+import type {
   AlertPayload,
   VideoAlertPayload,
-  LocationAlertPayload,
-  AlertType, 
-  BehaviorType, 
-  NotificationChannel,
-  Severity,
-  Location 
+  WazeAccidentPayload,
+  AccidentSubtype,
+  AlertType,
+  BehaviorType,
+  Location
 } from '@/types/alert.types';
 
 // URLs padrão para mídia de alertas
@@ -33,11 +32,11 @@ const SAO_CAETANO_STREETS = [
 const generateLocation = (): Location => {
   const latOffset = (Math.random() - 0.5) * 0.02;
   const lngOffset = (Math.random() - 0.5) * 0.02;
-  
+
   const rua = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
   const numero = faker.number.int({ min: 1, max: 999 });
   const bairro = faker.helpers.arrayElement(SAO_CAETANO_NEIGHBORHOODS);
-  
+
   return {
     latitude: SAO_CAETANO_CENTER.lat + latOffset,
     longitude: SAO_CAETANO_CENTER.lng + lngOffset,
@@ -45,106 +44,6 @@ const generateLocation = (): Location => {
     city: 'São Caetano do Sul',
     state: 'São Paulo',
   };
-};
-
-const generateSeverity = (alertType: AlertType): Severity => {
-  const severityMap: Record<AlertType, Severity[]> = {
-    accident: ['high', 'critical'],
-    traffic: ['low', 'medium', 'high'],
-    video: ['medium', 'high', 'critical'],
-  };
-  
-  const options = severityMap[alertType];
-  return faker.helpers.arrayElement(options);
-};
-
-const generateDescription = (alertType: AlertType, behaviorType: BehaviorType): string => {
-  const descriptions: Record<AlertType, Record<string, string[]>> = {
-    traffic: {
-      crossing_a_line: [
-        'Veículo cruzou linha contínua na via principal',
-        'Pedestre atravessou fora da faixa de segurança',
-        'Motocicleta ultrapassou em local proibido',
-      ],
-      stopped_vehicle: [
-        'Veículo parado em local não permitido',
-        'Carro estacionado em fila dupla',
-        'Veículo quebrado na pista',
-      ],
-      counterflow_traffic: [
-        'Veículo trafegando na contramão',
-        'Motocicleta em sentido contrário ao fluxo',
-      ],
-      default: [
-        'Congestionamento detectado na via',
-        'Fluxo de tráfego irregular',
-      ],
-    },
-    video: {
-      anomaly: [
-        'Comportamento anômalo detectado nas câmeras',
-        'Padrão de movimento incomum identificado',
-      ],
-      crowd_density: [
-        'Alta densidade de pessoas detectada',
-        'Aglomeração acima do limite permitido',
-      ],
-      unattended_object: [
-        'Objeto abandonado detectado',
-        'Mala suspeita identificada',
-      ],
-      smoke_and_fire: [
-        'Fumaça detectada pelas câmeras',
-        'Possível princípio de incêndio',
-      ],
-      default: [
-        'Evento detectado pelo sistema de vídeo',
-      ],
-    },
-    accident: {
-      slip_and_fall: [
-        'Queda de pessoa detectada',
-        'Acidente com pedestre',
-      ],
-      default: [
-        'Acidente de trânsito reportado',
-        'Colisão entre veículos',
-        'Acidente com vítimas',
-      ],
-    },
-  };
-
-  const typeDescriptions = descriptions[alertType];
-  const behaviorDescriptions = typeDescriptions[behaviorType] || typeDescriptions.default;
-  
-  return faker.helpers.arrayElement(behaviorDescriptions);
-};
-
-const generateMetadata = (alertType: AlertType, _behaviorType: BehaviorType) => {
-  const baseMetadata = {
-    cameraId: faker.string.alphanumeric(8).toUpperCase(),
-    confidence: faker.number.float({ min: 0.7, max: 0.99, fractionDigits: 2 }),
-    detectionTime: faker.number.int({ min: 100, max: 5000 }), // ms
-  };
-
-  if (alertType === 'video') {
-    return {
-      ...baseMetadata,
-      frameNumber: faker.number.int({ min: 1000, max: 99999 }),
-      videoSource: faker.helpers.arrayElement(['camera-01', 'camera-02', 'camera-03']),
-    };
-  }
-
-  if (alertType === 'traffic') {
-    return {
-      ...baseMetadata,
-      vehicleType: faker.helpers.arrayElement(['car', 'motorcycle', 'truck', 'bus']),
-      licensePlate: faker.vehicle.vrm(),
-      speed: faker.number.int({ min: 20, max: 120 }),
-    };
-  }
-
-  return baseMetadata;
 };
 
 const BEHAVIOR_TYPE_TO_STRING: Record<BehaviorType, string> = {
@@ -163,7 +62,7 @@ const BEHAVIOR_TYPE_TO_STRING: Record<BehaviorType, string> = {
 
 const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
   const eventTime = Date.now().toString();
-  
+
   return {
     id: faker.string.uuid(),
     accountId: '1000000',
@@ -182,31 +81,54 @@ const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
   };
 };
 
-const generateLocationAlert = (
-  alertType: AlertType,
-  behaviorType: BehaviorType,
-  notificationChannels: NotificationChannel[]
-): LocationAlertPayload => {
+const generateWazeAccident = (subtype: AccidentSubtype): WazeAccidentPayload => {
+  const location = generateLocation();
+  const now = Date.now();
+  const pubMillis = now - faker.number.int({ min: 0, max: 300000 }); // últimos 5 minutos
+
+  const street = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
+
   return {
-    alertType,
-    behaviorType,
-    notificationChannels,
-    timestamp: new Date().toISOString(),
-    location: generateLocation(),
-    severity: generateSeverity(alertType),
-    description: generateDescription(alertType, behaviorType),
-    metadata: generateMetadata(alertType, behaviorType),
+    city: 'São Caetano do Sul',
+    confidence: faker.number.int({ min: 6, max: 10 }), // >= 6 conforme regra
+    nThumbsUp: faker.number.int({ min: 0, max: 15 }),
+    street: street,
+    uuid: faker.string.uuid(),
+    country: 'BR',
+    type: 'ACCIDENT',
+    subtype,
+    roadType: faker.number.int({ min: 1, max: 7 }),
+    reliability: faker.number.int({ min: 6, max: 10 }), // >= 6 conforme regra
+    magvar: faker.number.int({ min: 0, max: 360 }),
+    reportRating: faker.number.int({ min: 5, max: 10 }), // >= 5 conforme regra
+    reportByMunicipalityUser: faker.datatype.boolean(),
+    pubMillis,
+    ts: pubMillis,
+    reportDescription: subtype === 'ACCIDENT_MAJOR'
+      ? faker.helpers.arrayElement([
+        'Acidente grave com vítimas',
+        'Colisão com múltiplos veículos',
+        'Acidente com bloqueio total da via'
+      ])
+      : faker.helpers.arrayElement([
+        'Pequena colisão',
+        'Acidente sem vítimas',
+        'Veículos com danos leves'
+      ]),
+    geo: `POINT(${location.longitude} ${location.latitude})`,
+    blockingAlertUuid: subtype === 'ACCIDENT_MAJOR' ? faker.string.uuid() : null,
+    tsInsert: now,
   };
 };
 
 export const generateMockAlert = (
   alertType: AlertType,
   behaviorType: BehaviorType,
-  notificationChannels: NotificationChannel[]
+  accidentSubtype?: AccidentSubtype
 ): AlertPayload => {
   if (alertType === 'video') {
     return generateVideoAlert(behaviorType);
   }
-  
-  return generateLocationAlert(alertType, behaviorType, notificationChannels);
+
+  return generateWazeAccident(accidentSubtype || 'ACCIDENT_MINOR');
 };
