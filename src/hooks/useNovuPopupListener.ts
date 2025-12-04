@@ -74,7 +74,6 @@ export const useNovuPopupListener = ({
     const initializeNovu = async () => {
       try {
         const subscriberId = await getOrCreateSubscriberId(authToken, isDevelopment);
-        console.log('subscriberId:', subscriberId)
         if (!subscriberId || !isMounted) {
           return;
         }
@@ -85,7 +84,6 @@ export const useNovuPopupListener = ({
         });
 
         novuInstance.on('notifications.notification_received', (data: any) => {
-        console.log('data:', data)
           if (!isMounted) return;
           
           const notification = data?.result;

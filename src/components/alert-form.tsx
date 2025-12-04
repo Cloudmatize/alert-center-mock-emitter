@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import { AlertMap } from '@/components/alert-map';
 import { AlertHeader } from '@/components/alert-header';
@@ -29,7 +29,7 @@ export default function AlertForm() {
     generatePayload,
   } = useAlertForm();
 
-  const { mutate: sendAlert, isPending, isSuccess, isError, error } = useSendAlert();
+  const { mutate: sendAlert, isPending, isSuccess, isError, error, reset } = useSendAlert();
   const [showPayload, setShowPayload] = useState(false);
   const [lastPayload, setLastPayload] = useState<string>('');
   const [location, setLocation] = useState<Location | null>(null);
@@ -43,6 +43,14 @@ export default function AlertForm() {
     isDevelopment: import.meta.env.VITE_NOVU_DEVELOPMENT === 'true',
     enabled: testMode && !!import.meta.env.VITE_NOVU_APP_ID && !!import.meta.env.VITE_NOVU_AUTH_TOKEN,
   });
+
+  useEffect(() => {
+    setShowPayload(false);
+    setLastPayload('');
+    setLocation(null);
+    setAccident(null);
+    reset();
+  }, [alertType, reset]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
