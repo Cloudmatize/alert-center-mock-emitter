@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getStoredEndpoint, setStoredEndpoint, getTestMode, setTestMode } from '@/lib/utils';
+import { getDefaultEndpoint, getTestMode, setTestMode } from '@/lib/utils';
 import type { AlertType, BehaviorType, NotificationChannel, AccidentSubtype } from '@/types/alert.types';
 import { generateMockAlert } from '@/services/mock-data-generator';
 
@@ -8,12 +8,11 @@ export const useAlertForm = () => {
   const [behaviorType, setBehaviorType] = useState<BehaviorType>('anomaly');
   const [accidentSubtype, setAccidentSubtype] = useState<AccidentSubtype>('ACCIDENT_MINOR');
   const [channels, setChannels] = useState<NotificationChannel[]>(['platform']);
-  const [endpointUrl, setEndpointUrl] = useState(getStoredEndpoint());
+  const [endpointUrl, setEndpointUrl] = useState(getDefaultEndpoint());
   const [testMode, setTestModeState] = useState(getTestMode());
 
   const updateEndpointUrl = (url: string) => {
     setEndpointUrl(url);
-    setStoredEndpoint(url);
   };
 
   const updateTestMode = (enabled: boolean) => {

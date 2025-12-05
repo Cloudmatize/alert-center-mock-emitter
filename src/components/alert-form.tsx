@@ -24,6 +24,8 @@ export default function AlertForm() {
     setAccidentSubtype,
     testMode,
     updateTestMode,
+    endpointUrl,
+    updateEndpointUrl,
     generatePayload,
   } = useAlertForm();
 
@@ -38,7 +40,7 @@ export default function AlertForm() {
   useNovuPopupListener({
     applicationIdentifier: import.meta.env.VITE_NOVU_APP_ID,
     authToken: import.meta.env.VITE_NOVU_AUTH_TOKEN,
-    isDevelopment: import.meta.env.VITE_NOVU_DEVELOPMENT === 'true',
+    isDevelopment: import.meta.env.DEV,
     enabled: testMode && !!import.meta.env.VITE_NOVU_APP_ID && !!import.meta.env.VITE_NOVU_AUTH_TOKEN,
   });
 
@@ -66,7 +68,7 @@ export default function AlertForm() {
     }
 
     setShowPayload(true);
-    sendAlert({ payload, alertType });
+    sendAlert({ payload, alertType, endpoint: endpointUrl });
   };
 
   return (
@@ -82,6 +84,8 @@ export default function AlertForm() {
                 darkMode={darkMode}
                 testMode={testMode}
                 onTestModeChange={updateTestMode}
+                endpointUrl={endpointUrl}
+                onEndpointChange={updateEndpointUrl}
               />
 
               <AlertTypeSelector

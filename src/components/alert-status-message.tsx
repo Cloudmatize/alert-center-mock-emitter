@@ -30,7 +30,7 @@ export function AlertStatusMessage({
           <div className="flex items-center gap-2 mt-2">
             <FlaskConical className={`h-4 w-4 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
             <p className={`text-sm ${darkMode ? 'text-green-400' : 'text-green-700'}`}>
-              Modo teste: notificação em tempo real ativada
+              Escutando notificações: notificação em tempo real ativada
             </p>
           </div>
         )}

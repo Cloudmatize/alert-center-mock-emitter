@@ -12,12 +12,8 @@ export function formatDate(date: string | Date): string {
   }).format(new Date(date));
 }
 
-export function getStoredEndpoint(): string {
-  return localStorage.getItem('alertEndpointUrl') || import.meta.env.VITE_API_ENDPOINT || 'https://api.go.tasks-publisher.dev.4smartcloud.com/tasks';
-}
-
-export function setStoredEndpoint(url: string): void {
-  localStorage.setItem('alertEndpointUrl', url);
+export function getDefaultEndpoint(): string {
+  return 'https://api.go.tasks-publisher.dev.4smartcloud.com/tasks';
 }
 
 export function getTestMode(): boolean {

@@ -1,8 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import type { AlertPayload, AlertResponse, AlertType } from '@/types/alert.types';
 
-const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
-
 const apiClient = axios.create({
   timeout: 10000,
   headers: {
@@ -11,7 +9,7 @@ const apiClient = axios.create({
 });
 
 
-export const sendAlert = async (payload: AlertPayload, alertType: AlertType): Promise<AlertResponse> => {
+export const sendAlert = async (payload: AlertPayload, alertType: AlertType, endpoint: string): Promise<AlertResponse> => {
   try {
     let requestBody;
 
@@ -33,7 +31,7 @@ export const sendAlert = async (payload: AlertPayload, alertType: AlertType): Pr
       requestBody = payload;
     }
 
-    const response = await apiClient.post<AlertResponse>(API_ENDPOINT, requestBody);
+    const response = await apiClient.post<AlertResponse>(endpoint, requestBody);
 
     return {
       ...response.data,
