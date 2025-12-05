@@ -85,9 +85,9 @@ export interface AlertHistoryItem {
 }
 
 export const ALERT_TYPE_LABELS: Record<AlertType, string> = {
-  traffic: 'Trânsito',
-  video: 'Vídeo',
   accident: 'Acidente',
+  video: 'Vídeo',
+  traffic: 'Trânsito',
 };
 
 export const ALERT_TYPE_DESCRIPTIONS: Record<AlertType, string> = {
