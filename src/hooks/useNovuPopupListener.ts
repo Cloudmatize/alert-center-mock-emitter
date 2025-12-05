@@ -1,5 +1,5 @@
 import { Novu } from '@novu/js';
-import { useEffect, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const getApiBaseUrl = (isDevelopment = false) =>
@@ -84,17 +84,65 @@ export const useNovuPopupListener = ({
         });
 
         novuInstance.on('notifications.notification_received', (data: any) => {
+          if (isDevelopment) console.log('[Novu] Notification received:', data)
           if (!isMounted) return;
-          
           const notification = data?.result;
           if (notification) {
             try {
-              const payload = JSON.parse(
-                notification?.data?.payload?.replace(/'/g, '"') || '{}'
-              );
-              const message = payload.message || 'Nova notificação recebida';
+              const notificationData = notification?.data;
+              let payloadObj;
+              try {
+                payloadObj = JSON.parse(
+                  notificationData?.payload?.replace(/'/g, '"') || '{}'
+                );
+              } catch {
+                payloadObj = notificationData?.payload || {};
+              }
 
-              toast.info(message, {
+              const payloadFormatted = JSON.stringify(payloadObj, null, 2);
+
+              const ToastContent = () =>
+                createElement('div', { style: { paddingRight: '20px' } },
+                  createElement('div', {
+                    style: {
+                      fontSize: '16px',
+                      marginBottom: '8px',
+                      color: '#ffffff'
+                    }
+                  }, 'Notificação Recebida'),
+                  createElement('div', {
+                    style: {
+                      fontSize: '12px',
+                      marginBottom: '8px',
+                      color: '#a1a1a1'
+                    }
+                  }, 'Payload recebido:'),
+                  createElement('div', {
+                    style: {
+                      background: '#f5f5f5',
+                      borderRadius: '4px',
+                      overflow: 'hidden'
+                    }
+                  },
+                    createElement('pre', {
+                      style: {
+                        padding: '12px',
+                        overflowX: 'auto',
+                        overflowY: 'auto',
+                        maxHeight: '350px',
+                        margin: 0,
+                        fontSize: '11px',
+                        lineHeight: '1.4',
+                        color: '#333',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word'
+                      }
+                    }, payloadFormatted)
+                  )
+                );
+
+              toast.success(ToastContent, {
+                autoClose: 12000,
                 onClick: () => {
                   if (notification.redirect?.url) {
                     window.open(
@@ -106,7 +154,7 @@ export const useNovuPopupListener = ({
               });
             } catch (e) {
               console.error('[Novu] Failed to process notification payload:', e);
-              toast.info('Nova notificação recebida');
+              toast.success('Nova notificação recebida');
             }
           }
         });
