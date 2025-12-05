@@ -84,7 +84,6 @@ export const useNovuPopupListener = ({
         });
 
         novuInstance.on('notifications.notification_received', (data: any) => {
-          if (isDevelopment) console.log('[Novu] Notification received:', data)
           if (!isMounted) return;
           const notification = data?.result;
           if (notification) {
