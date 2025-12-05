@@ -22,7 +22,7 @@ export function AccidentSubtypeSelector({
   return (
     <div>
       <Label htmlFor="accidentSubtype" className={darkMode ? 'text-gray-200' : ''}>
-        Tipo de Acidente
+        Política do Alerta
       </Label>
       <Select
         value={accidentSubtype}

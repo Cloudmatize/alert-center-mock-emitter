@@ -27,7 +27,7 @@ export function AlertTypeSelector({
   return (
     <div>
       <Label htmlFor="alertType" className={darkMode ? 'text-gray-200' : ''}>
-        Tipo de Alerta
+        Categoria do Alerta
       </Label>
       <Select
         value={alertType}

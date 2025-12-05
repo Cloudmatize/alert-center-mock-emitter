@@ -1,19 +1,10 @@
-export type AlertType = 'traffic' | 'video' | 'accident';
+export type AlertType = 'traffic' | 'accident';
 
-export type AccidentSubtype = 'ACCIDENT_MAJOR' | 'ACCIDENT_MINOR';
+export type AccidentSubtype = 'MAJOR_AND_MINOR_ACCIDENTS';
 
 export type BehaviorType =
-  | 'anomaly'
-  | 'asset_protection'
   | 'counterflow_traffic'
-  | 'crossing_a_line'
-  | 'crowd_density'
-  | 'grouping'
-  | 'moving_in_area'
-  | 'slip_and_fall'
-  | 'smoke_and_fire'
-  | 'stopped_vehicle'
-  | 'unattended_object';
+  | 'crossing_a_line';
 
 export type NotificationChannel = 'platform' | 'whatsapp' | 'email';
 
@@ -35,7 +26,7 @@ export interface WazeAccidentPayload {
   uuid: string;
   country: string;
   type: 'ACCIDENT';
-  subtype: AccidentSubtype;
+  subtype: 'ACCIDENT_MAJOR' | 'ACCIDENT_MINOR';
   roadType: number;
   reliability: number;
   magvar: number;
@@ -86,39 +77,26 @@ export interface AlertHistoryItem {
 
 export const ALERT_TYPE_LABELS: Record<AlertType, string> = {
   accident: 'Acidente',
-  video: 'Vídeo',
   traffic: 'Trânsito',
 };
 
 export const ALERT_TYPE_DESCRIPTIONS: Record<AlertType, string> = {
-  video: 'Envie alertas baseados em análise de vídeo, detectando eventos e anomalias capturadas pelas câmeras de monitoramento. Ideal para identificação de situações que requerem atenção imediata.',
-  traffic: 'Notifique sobre congestionamentos, bloqueios de via ou alterações no fluxo de tráfego em tempo real. O sistema processa e envia automaticamente os dados de trânsito para os serviços de monitoramento.',
+  traffic: 'Envie alertas baseados em análise de vídeo, detectando eventos e anomalias capturadas pelas câmeras de monitoramento. Ideal para identificação de situações que requerem atenção imediata.',
   accident: 'Dispare notificações de emergência para acidentes de trânsito, acionando automaticamente os serviços de resposta apropriados. Inclui informações sobre localização, severidade e recursos necessários.',
 };
 
 export const ALERT_TYPE_AVAILABLE: Record<AlertType, boolean> = {
-  traffic: false,
-  video: true,
+  traffic: true,
   accident: true,
 };
 
-export const BEHAVIOR_TYPE_LABELS: Record<BehaviorType, string> = {
-  anomaly: 'Anomalia',
-  asset_protection: 'Proteção de ativo',
-  counterflow_traffic: 'Tráfego em contramão',
-  crossing_a_line: 'Cruzamento de linha',
-  crowd_density: 'Densidade de pessoas',
-  grouping: 'Agrupamento',
-  moving_in_area: 'Movimento em área',
-  slip_and_fall: 'Queda de pessoa',
-  smoke_and_fire: 'Fumaça detectada',
-  stopped_vehicle: 'Veículo parado',
-  unattended_object: 'Objeto abandonado',
+export const TRAFFIC_POLICY_LABELS: Record<BehaviorType, string> = {
+  counterflow_traffic: 'Veículo em contrafluxo',
+  crossing_a_line: 'Veículo em excesso de velocidade',
 };
 
 export const ACCIDENT_SUBTYPE_LABELS: Record<AccidentSubtype, string> = {
-  ACCIDENT_MAJOR: 'Acidente Grave',
-  ACCIDENT_MINOR: 'Acidente Leve',
+  MAJOR_AND_MINOR_ACCIDENTS: 'Acidentes reportados dos tipos: grave e leve',
 };
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> = {

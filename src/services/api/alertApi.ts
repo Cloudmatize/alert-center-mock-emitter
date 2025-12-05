@@ -13,7 +13,7 @@ export const sendAlert = async (payload: AlertPayload, alertType: AlertType, end
   try {
     let requestBody;
 
-    if (alertType === 'video') {
+    if (alertType === 'traffic') {
       requestBody = {
         toTable: 'irisity_events',
         taskSource: 'irisity',

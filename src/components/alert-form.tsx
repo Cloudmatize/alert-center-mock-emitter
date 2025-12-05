@@ -141,7 +141,7 @@ export default function AlertForm() {
             ? 'opacity-100 translate-x-0'
             : 'opacity-0 translate-x-8 pointer-events-none absolute'
             }`}>
-            {(location || accident) && alertType !== 'video' && (
+            {(location || accident) && alertType !== 'traffic' && (
               <AlertMap location={location || undefined} accident={accident || undefined} darkMode={darkMode} />
             )}
 

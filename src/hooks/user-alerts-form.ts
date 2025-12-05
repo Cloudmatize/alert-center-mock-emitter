@@ -5,8 +5,8 @@ import { generateMockAlert } from '@/services/mock-data-generator';
 
 export const useAlertForm = () => {
   const [alertType, setAlertType] = useState<AlertType>('accident');
-  const [behaviorType, setBehaviorType] = useState<BehaviorType>('anomaly');
-  const [accidentSubtype, setAccidentSubtype] = useState<AccidentSubtype>('ACCIDENT_MINOR');
+  const [behaviorType, setBehaviorType] = useState<BehaviorType>('counterflow_traffic');
+  const [accidentSubtype, setAccidentSubtype] = useState<AccidentSubtype>('MAJOR_AND_MINOR_ACCIDENTS');
   const [channels, setChannels] = useState<NotificationChannel[]>(['platform']);
   const [endpointUrl, setEndpointUrl] = useState(getDefaultEndpoint());
   const [testMode, setTestModeState] = useState(getTestMode());
@@ -29,7 +29,7 @@ export const useAlertForm = () => {
   };
 
   const generatePayload = () => {
-    return generateMockAlert(alertType, behaviorType, accidentSubtype);
+    return generateMockAlert(alertType, behaviorType);
   };
 
   return {
