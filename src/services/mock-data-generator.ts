@@ -4,7 +4,8 @@ import type {
   VideoAlertPayload,
   WazeAccidentPayload,
   AlertType,
-  BehaviorType,
+  AlertPolicy,
+  TrafficPolicy,
   Location
 } from '@/types/alert.types';
 
@@ -45,12 +46,12 @@ const generateLocation = (): Location => {
   };
 };
 
-const BEHAVIOR_TYPE_TO_STRING: Record<BehaviorType, string> = {
+const TRAFFIC_POLICY_TO_STRING: Record<TrafficPolicy, string> = {
   counterflow_traffic: 'Counterflow Traffic',
-  crossing_a_line: 'Crossing a Line',
+  crossing_a_line: 'Crossing A Line',
 };
 
-const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
+const generateVideoAlert = (policy: TrafficPolicy): VideoAlertPayload => {
   const eventTime = Date.now().toString();
 
   return {
@@ -63,7 +64,7 @@ const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
     eventTime,
     description: '',
     objectType: faker.helpers.arrayElement(['Person', 'Car', 'Truck', 'Motorcycle', 'Bus']),
-    behaviorType: BEHAVIOR_TYPE_TO_STRING[behaviorType],
+    behaviorType: TRAFFIC_POLICY_TO_STRING[policy],
     status: '1',
     severity: faker.helpers.arrayElement(['1', '2', '3', '4']),
     clip: DEFAULT_ALERT_VIDEO_URL,
@@ -74,11 +75,10 @@ const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
 const generateWazeAccident = (): WazeAccidentPayload => {
   const location = generateLocation();
   const now = Date.now();
-  const pubMillis = now - 180000; // 3 minutos atrás
+  const pubMillis = now - 180000; // 3 minutos atrás (Precisa dos últimos minutos para parecer recente)
 
   const street = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
   
-  // Gera aleatoriamente entre grave e leve
   const randomSubtype = faker.helpers.arrayElement(['ACCIDENT_MAJOR', 'ACCIDENT_MINOR']);
 
   return {
@@ -116,10 +116,10 @@ const generateWazeAccident = (): WazeAccidentPayload => {
 
 export const generateMockAlert = (
   alertType: AlertType,
-  behaviorType: BehaviorType
+  alertPolicy: AlertPolicy
 ): AlertPayload => {
   if (alertType === 'traffic') {
-    return generateVideoAlert(behaviorType);
+    return generateVideoAlert(alertPolicy as TrafficPolicy);
   }
 
   return generateWazeAccident();

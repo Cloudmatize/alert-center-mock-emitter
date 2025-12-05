@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { getDefaultEndpoint, getTestMode, setTestMode } from '@/lib/utils';
-import type { AlertType, BehaviorType, NotificationChannel, AccidentSubtype } from '@/types/alert.types';
+import type { AlertType, AlertPolicy } from '@/types/alert.types';
 import { generateMockAlert } from '@/services/mock-data-generator';
 
 export const useAlertForm = () => {
   const [alertType, setAlertType] = useState<AlertType>('accident');
-  const [behaviorType, setBehaviorType] = useState<BehaviorType>('counterflow_traffic');
-  const [accidentSubtype, setAccidentSubtype] = useState<AccidentSubtype>('MAJOR_AND_MINOR_ACCIDENTS');
-  const [channels, setChannels] = useState<NotificationChannel[]>(['platform']);
+  const [alertPolicy, setAlertPolicy] = useState<AlertPolicy>('major_and_minor_accidents');
   const [endpointUrl, setEndpointUrl] = useState(getDefaultEndpoint());
   const [testMode, setTestModeState] = useState(getTestMode());
+
+  const updateAlertType = (type: AlertType) => {
+    setAlertType(type);
+    setAlertPolicy(type === 'traffic' ? 'counterflow_traffic' : 'major_and_minor_accidents');
+  };
 
   const updateEndpointUrl = (url: string) => {
     setEndpointUrl(url);
@@ -20,28 +23,15 @@ export const useAlertForm = () => {
     setTestMode(enabled);
   };
 
-  const toggleChannel = (channel: NotificationChannel) => {
-    setChannels((prev) =>
-      prev.includes(channel)
-        ? prev.filter((c) => c !== channel)
-        : [...prev, channel]
-    );
-  };
-
   const generatePayload = () => {
-    return generateMockAlert(alertType, behaviorType);
+    return generateMockAlert(alertType, alertPolicy);
   };
 
   return {
     alertType,
-    setAlertType,
-    behaviorType,
-    setBehaviorType,
-    accidentSubtype,
-    setAccidentSubtype,
-    channels,
-    setChannels,
-    toggleChannel,
+    setAlertType: updateAlertType,
+    alertPolicy,
+    setAlertPolicy,
     endpointUrl,
     updateEndpointUrl,
     testMode,

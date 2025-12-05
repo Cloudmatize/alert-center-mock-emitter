@@ -1,10 +1,8 @@
 export type AlertType = 'traffic' | 'accident';
 
-export type AccidentSubtype = 'MAJOR_AND_MINOR_ACCIDENTS';
-
-export type BehaviorType =
-  | 'counterflow_traffic'
-  | 'crossing_a_line';
+export type TrafficPolicy = 'counterflow_traffic' | 'crossing_a_line';
+export type AccidentPolicy = 'major_and_minor_accidents';
+export type AlertPolicy = TrafficPolicy | AccidentPolicy;
 
 export type NotificationChannel = 'platform' | 'whatsapp' | 'email';
 
@@ -90,13 +88,15 @@ export const ALERT_TYPE_AVAILABLE: Record<AlertType, boolean> = {
   accident: true,
 };
 
-export const TRAFFIC_POLICY_LABELS: Record<BehaviorType, string> = {
-  counterflow_traffic: 'Veículo em contrafluxo',
-  crossing_a_line: 'Veículo em excesso de velocidade',
-};
-
-export const ACCIDENT_SUBTYPE_LABELS: Record<AccidentSubtype, string> = {
-  MAJOR_AND_MINOR_ACCIDENTS: 'Acidentes reportados dos tipos: grave e leve',
+// Mapeamento de políticas por tipo de alerta
+export const ALERT_POLICIES: Record<AlertType, Record<string, string>> = {
+  traffic: {
+    counterflow_traffic: 'Veículo em contrafluxo',
+    crossing_a_line: 'Veículo em excesso de velocidade',
+  },
+  accident: {
+    major_and_minor_accidents: 'Acidentes reportados dos tipos: grave e leve',
+  },
 };
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> = {

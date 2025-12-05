@@ -4,11 +4,10 @@ import { AlertMap } from '@/components/alert-map';
 import { AlertHeader } from '@/components/alert-header';
 import { TestModeConfig } from '@/components/endpoint-config';
 import { AlertTypeSelector } from '@/components/alert-type-selector';
-import { BehaviorTypeSelector } from '@/components/behavior-type-selector';
-import { AccidentSubtypeSelector } from '@/components/accident-subtype-selector';
+import { AlertPolicySelector } from '@/components/alert-policy-selector';
 import { AlertStatusMessage } from '@/components/alert-status-message';
 import { PayloadDisplay } from '@/components/payload-display';
-import type { Location, WazeAccidentPayload } from '@/types/alert.types';
+import type { WazeAccidentPayload } from '@/types/alert.types';
 import { useAlertForm } from '@/hooks/user-alerts-form';
 import { useSendAlert } from '@/hooks/mutations/use-send-alerts';
 import { useNovuPopupListener } from '@/hooks/useNovuPopupListener';
@@ -18,10 +17,8 @@ export default function AlertForm() {
   const {
     alertType,
     setAlertType,
-    behaviorType,
-    setBehaviorType,
-    accidentSubtype,
-    setAccidentSubtype,
+    alertPolicy,
+    setAlertPolicy,
     testMode,
     updateTestMode,
     endpointUrl,
@@ -32,7 +29,6 @@ export default function AlertForm() {
   const { mutate: sendAlert, isPending, isSuccess, isError, error, reset } = useSendAlert();
   const [showPayload, setShowPayload] = useState(false);
   const [lastPayload, setLastPayload] = useState<string>('');
-  const [location, setLocation] = useState<Location | null>(null);
   const [accident, setAccident] = useState<WazeAccidentPayload | null>(null);
   const [darkMode, setDarkMode] = useState(true);
   const [payloadKey, setPayloadKey] = useState(0);
@@ -47,7 +43,6 @@ export default function AlertForm() {
   useEffect(() => {
     setShowPayload(false);
     setLastPayload('');
-    setLocation(null);
     setAccident(null);
     reset();
   }, [alertType, reset]);
@@ -61,9 +56,7 @@ export default function AlertForm() {
 
     if ('geo' in payload) {
       setAccident(payload as WazeAccidentPayload);
-      setLocation(null);
     } else {
-      setLocation(null);
       setAccident(null);
     }
 
@@ -94,19 +87,12 @@ export default function AlertForm() {
                 onAlertTypeChange={setAlertType}
               />
 
-              {alertType === 'accident' ? (
-                <AccidentSubtypeSelector
-                  darkMode={darkMode}
-                  accidentSubtype={accidentSubtype}
-                  onAccidentSubtypeChange={setAccidentSubtype}
-                />
-              ) : (
-                <BehaviorTypeSelector
-                  darkMode={darkMode}
-                  behaviorType={behaviorType}
-                  onBehaviorTypeChange={setBehaviorType}
-                />
-              )}
+              <AlertPolicySelector
+                darkMode={darkMode}
+                alertType={alertType}
+                alertPolicy={alertPolicy}
+                onAlertPolicyChange={setAlertPolicy}
+              />
 
               <Button
                 type="submit"
@@ -141,8 +127,8 @@ export default function AlertForm() {
             ? 'opacity-100 translate-x-0'
             : 'opacity-0 translate-x-8 pointer-events-none absolute'
             }`}>
-            {(location || accident) && alertType !== 'traffic' && (
-              <AlertMap location={location || undefined} accident={accident || undefined} darkMode={darkMode} />
+            {accident && alertType === 'accident' && (
+              <AlertMap accident={accident} darkMode={darkMode} />
             )}
 
             {lastPayload && (
