@@ -16,34 +16,6 @@ npm install
 npm run dev
 ```
 
-## 📦 Estrutura
-
-```
-src/
-├── components/
-│   ├── alert-form.tsx              # Formulário principal
-│   ├── alert-header.tsx            # Cabeçalho da aplicação
-│   ├── alert-type-selector.tsx     # Seletor de categoria de alerta
-│   ├── alert-policy-selector.tsx   # Seletor de política do alerta
-│   ├── alert-map.tsx               # Mapa para acidentes
-│   ├── endpoint-config.tsx         # Configuração de endpoint
-│   ├── alert-status-message.tsx    # Mensagens de status
-│   ├── payload-display.tsx         # Visualização do payload
-│   └── ui/                         # Componentes Radix UI
-├── hooks/
-│   ├── useNovuPopupListener.ts     # Hook para notificações Novu
-│   ├── user-alerts-form.ts         # Hook do formulário
-│   ├── mutations/
-│   │   └── use-send-alerts.ts      # Mutation para envio
-│   └── queries/
-│       └── user-alerts-history.ts  # Query para histórico
-├── services/
-│   ├── api/
-│   │   └── alertApi.ts             # Cliente HTTP
-│   └── mock-data-generator.ts      # Gerador de dados mock
-└── types/
-    └── alert.types.ts              # Definições de tipos
-```
 
 ## 🎯 Uso
 
@@ -56,21 +28,26 @@ src/
    - **Acidente**: Acidentes grave/leve (gerados aleatoriamente)
 4. **Envie o alerta** - payload é gerado automaticamente com dados realistas
 
-**Nota:** O endpoint configurado na interface só persiste durante a sessão atual.
+### Configuração do Endpoint
+
+O endpoint da API possui as seguintes características:
+- **Valor padrão**: Obtido da variável de ambiente `VITE_API_ENDPOINT` (obrigatório)
+- **Edição via interface**: Ative o switch ao lado do campo para editar manualmente
 
 ## 🔧 Configuração
 
-### Variáveis de Ambiente (Opcional)
+### Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz para configurar notificações Novu:
+Crie um arquivo `.env` na raiz para configurar o endpoint da API e notificações Novu:
 
 ```env
+# Endpoint da API (Obrigatório - valor padrão)
+VITE_API_ENDPOINT=https://api.example.com/tasks
+
 # Notificações Novu (Opcional - apenas para desenvolvimento)
 VITE_NOVU_APP_ID=seu-application-identifier
 VITE_NOVU_AUTH_TOKEN=seu-jwt-token
 ```
-
-**Nota:** O endpoint da API é configurado diretamente na interface, não requer variável de ambiente.
 
 ### 🔔 Notificações em Tempo Real (Desenvolvimento)
 

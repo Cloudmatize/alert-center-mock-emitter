@@ -1,7 +1,8 @@
-import { FlaskConical, Globe } from 'lucide-react';
+import { FlaskConical, Globe, Lock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { getDefaultEndpoint } from '@/lib/utils';
 
 interface TestModeConfigProps {
   darkMode: boolean;
@@ -9,6 +10,8 @@ interface TestModeConfigProps {
   onTestModeChange: (enabled: boolean) => void;
   endpointUrl: string;
   onEndpointChange: (url: string) => void;
+  canEditEndpoint: boolean;
+  onCanEditEndpointChange: (enabled: boolean) => void;
 }
 
 export function TestModeConfig({
@@ -17,28 +20,48 @@ export function TestModeConfig({
   onTestModeChange,
   endpointUrl,
   onEndpointChange,
+  canEditEndpoint,
+  onCanEditEndpointChange,
 }: TestModeConfigProps) {
   const isNovuConfigured = import.meta.env.DEV && !!import.meta.env.VITE_NOVU_APP_ID && !!import.meta.env.VITE_NOVU_AUTH_TOKEN;
+
+  const handleEditToggle = (enabled: boolean) => {
+    onCanEditEndpointChange(enabled);
+    if (!enabled) {
+      onEndpointChange(getDefaultEndpoint());
+    }
+  };
 
   return (
     <div className={`border-b pb-6 ${darkMode ? 'border-gray-800' : 'border-gray-200'}`}>
       <div className={isNovuConfigured ? 'mb-4' : ''}>
-        <div className="flex items-center gap-2 mb-2">
-          <Globe className={`h-4 w-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-          <Label htmlFor="endpoint-url" className={darkMode ? 'text-gray-300' : 'text-gray-700'}>
-            Endpoint da API
-          </Label>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Globe className={`h-4 w-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+            <Label htmlFor="endpoint-url" className={darkMode ? 'text-gray-300' : 'text-gray-700'}>
+              Endpoint da API
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Lock className={`h-3 w-3 ${canEditEndpoint ? 'text-green-500' : darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+            <Switch
+              checked={canEditEndpoint}
+              onCheckedChange={handleEditToggle}
+              className="scale-75"
+            />
+          </div>
         </div>
         <Input
           id="endpoint-url"
           type="url"
           value={endpointUrl}
           onChange={(e) => onEndpointChange(e.target.value)}
+          disabled={!canEditEndpoint}
           placeholder="https://api.example.com/tasks"
-          className={`${darkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-300'}`}
+          className={`${darkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-300'} ${!canEditEndpoint ? 'opacity-60 cursor-not-allowed' : ''}`}
         />
         <p className={`text-xs mt-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-          Defina o endpoint para onde os alertas serão enviados
+          {canEditEndpoint ? 'Defina o endpoint para onde os alertas serão enviados' : 'Usando endpoint padrão da variável de ambiente'}
         </p>
       </div>
 

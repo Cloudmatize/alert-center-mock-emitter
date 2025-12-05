@@ -8,6 +8,7 @@ export const useAlertForm = () => {
   const [alertPolicy, setAlertPolicy] = useState<AlertPolicy>('major_and_minor_accidents');
   const [endpointUrl, setEndpointUrl] = useState(getDefaultEndpoint());
   const [testMode, setTestModeState] = useState(getTestMode());
+  const [canEditEndpoint, setCanEditEndpoint] = useState(false);
 
   const updateAlertType = (type: AlertType) => {
     setAlertType(type);
@@ -23,6 +24,13 @@ export const useAlertForm = () => {
     setTestMode(enabled);
   };
 
+  const updateCanEditEndpoint = (enabled: boolean) => {
+    setCanEditEndpoint(enabled);
+    if (!enabled) {
+      setEndpointUrl(getDefaultEndpoint());
+    }
+  };
+
   const generatePayload = () => {
     return generateMockAlert(alertType, alertPolicy);
   };
@@ -36,6 +44,8 @@ export const useAlertForm = () => {
     updateEndpointUrl,
     testMode,
     updateTestMode,
+    canEditEndpoint,
+    updateCanEditEndpoint,
     generatePayload,
   };
 };

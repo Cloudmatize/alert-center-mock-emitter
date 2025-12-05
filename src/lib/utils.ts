@@ -13,7 +13,7 @@ export function formatDate(date: string | Date): string {
 }
 
 export function getDefaultEndpoint(): string {
-  return 'https://api.go.tasks-publisher.dev.4smartcloud.com/tasks';
+  return import.meta.env.VITE_API_ENDPOINT || 'https://api.go.tasks-publisher.dev.4smartcloud.com/tasks';
 }
 
 export function getTestMode(): boolean {

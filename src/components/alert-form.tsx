@@ -23,6 +23,8 @@ export default function AlertForm() {
     updateTestMode,
     endpointUrl,
     updateEndpointUrl,
+    canEditEndpoint,
+    updateCanEditEndpoint,
     generatePayload,
   } = useAlertForm();
 
@@ -79,6 +81,8 @@ export default function AlertForm() {
                 onTestModeChange={updateTestMode}
                 endpointUrl={endpointUrl}
                 onEndpointChange={updateEndpointUrl}
+                canEditEndpoint={canEditEndpoint}
+                onCanEditEndpointChange={updateCanEditEndpoint}
               />
 
               <AlertTypeSelector
