@@ -26,7 +26,7 @@ export function TestModeConfig({
             </Label>
           </div>
           <p className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-            Ativa o listener para receber e exibir notificações Novu na plataforma
+            Ativa o listener para receber e exibir notificações Novu nesta plataforma.
           </p>
         </div>
         <Switch
