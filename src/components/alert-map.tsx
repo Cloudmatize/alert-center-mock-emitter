@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { DivIcon } from 'leaflet';
+import { MapPin, Building2, FileText, ThumbsUp } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import type { Location, WazeAccidentPayload } from '@/types/alert.types';
 
@@ -102,31 +103,69 @@ export function AlertMap({ location, accident, darkMode = false }: AlertMapProps
             closeButton={false}
           >
             {accident ? (
-              <div className="p-2">
-                <p className="font-semibold mb-1 text-base text-gray-900">
-                  {accident.subtype === 'ACCIDENT_MAJOR' ? '🚨 Acidente Grave' : '⚠️ Acidente Leve'}
-                </p>
-                <p className="text-sm text-gray-700 font-medium">{accident.street}</p>
-                <p className="text-sm text-gray-600">{accident.city}</p>
-                <p className="text-xs mt-2 text-gray-600">{accident.reportDescription}</p>
-                <div className="mt-2 pt-2 border-t border-gray-200">
-                  <p className="text-xs text-gray-500">Confiança: {accident.confidence}/10</p>
-                  <p className="text-xs text-gray-500">Confiabilidade: {accident.reliability}/10</p>
-                  <p className="text-xs text-gray-500">👍 {accident.nThumbsUp}</p>
+              <div className="p-3 min-w-[260px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-2 h-2 rounded-full ${accident.subtype === 'ACCIDENT_MAJOR' ? 'bg-red-500 animate-pulse' : 'bg-orange-500 animate-pulse'}`}></div>
+                  <span className={`font-bold text-base ${accident.subtype === 'ACCIDENT_MAJOR' ? 'text-red-600' : 'text-orange-600'}`}>
+                    {accident.subtype === 'ACCIDENT_MAJOR' ? 'Acidente Grave' : 'Acidente Leve'}
+                  </span>
                 </div>
-                <p className="text-xs mt-1 text-gray-400">
-                  📍 {position[0].toFixed(4)}, {position[1].toFixed(4)}
-                </p>
+                
+                <div className="space-y-3 mb-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-sm text-gray-800 font-semibold m-0">{accident.street}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-sm text-gray-600 m-0">{accident.city}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
+                    <span className="text-xs text-gray-600 italic leading-tight m-0">{accident.reportDescription}</span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-1.5 p-1.5 bg-gray-50 rounded-lg">
+                  <div className="flex flex-col items-center py-1">
+                    <span className="text-[10px] text-gray-500">Confiança</span>
+                    <span className="text-sm font-bold text-gray-600">{accident.confidence}/10</span>
+                  </div>
+                  <div className="flex flex-col items-center py-1">
+                    <span className="text-[10px] text-gray-500">Confiabilidade</span>
+                    <span className="text-sm font-bold text-gray-600">{accident.reliability}/10</span>
+                  </div>
+                  <div className="flex flex-col items-center py-1">
+                    <span className="text-[10px] text-gray-500">Avaliação</span>
+                    <span className="text-sm font-bold text-gray-600">{accident.reportRating}/10</span>
+                  </div>
+                  <div className="flex flex-col items-center py-1">
+                    <span className="text-[10px] text-gray-500 flex items-center gap-0.5">
+                      <ThumbsUp className="w-2.5 h-2.5" />
+                    </span>
+                    <span className="text-sm font-bold text-gray-600">{accident.nThumbsUp}</span>
+                  </div>
+                </div>
+                
+                <div className="mt-2 pt-1.5 border-t border-gray-200 flex items-center justify-center gap-1">
+                  <MapPin className="w-3 h-3 text-gray-400" />
+                  <p className="text-[10px] text-gray-400 m-0">
+                    {position[0].toFixed(4)}, {position[1].toFixed(4)}
+                  </p>
+                </div>
               </div>
             ) : location ? (
               <div className="p-2">
-                <p className="font-semibold mb-1 text-base text-gray-900">{location.address}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-semibold mb-1 text-base text-gray-900 m-0">{location.address}</p>
+                <p className="text-sm text-gray-600 m-0">
                   {location.city}, {location.state}
                 </p>
-                <p className="text-xs mt-2 text-gray-500">
-                  📍 {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-                </p>
+                <div className="flex items-center gap-1 mt-2">
+                  <MapPin className="w-3 h-3 text-gray-400" />
+                  <p className="text-xs text-gray-500 m-0">
+                    {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                  </p>
+                </div>
               </div>
             ) : null}
           </Popup>

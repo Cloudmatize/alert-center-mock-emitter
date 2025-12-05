@@ -84,23 +84,23 @@ const generateVideoAlert = (behaviorType: BehaviorType): VideoAlertPayload => {
 const generateWazeAccident = (subtype: AccidentSubtype): WazeAccidentPayload => {
   const location = generateLocation();
   const now = Date.now();
-  const pubMillis = now - faker.number.int({ min: 0, max: 300000 }); // últimos 5 minutos
+  const pubMillis = now - 180000; // 3 minutos atrás
 
   const street = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
 
   return {
     city: 'São Caetano do Sul',
-    confidence: faker.number.int({ min: 6, max: 10 }), // >= 6 conforme regra
+    confidence: faker.number.int({ min: 6, max: 10 }), 
     nThumbsUp: faker.number.int({ min: 0, max: 15 }),
-    street: street,
+    street,
     uuid: faker.string.uuid(),
     country: 'BR',
     type: 'ACCIDENT',
     subtype,
     roadType: faker.number.int({ min: 1, max: 7 }),
-    reliability: faker.number.int({ min: 6, max: 10 }), // >= 6 conforme regra
+    reliability: faker.number.int({ min: 6, max: 10 }), 
     magvar: faker.number.int({ min: 0, max: 360 }),
-    reportRating: faker.number.int({ min: 5, max: 10 }), // >= 5 conforme regra
+    reportRating: faker.number.int({ min: 5, max: 10 }), 
     reportByMunicipalityUser: faker.datatype.boolean(),
     pubMillis,
     ts: pubMillis,
@@ -117,7 +117,7 @@ const generateWazeAccident = (subtype: AccidentSubtype): WazeAccidentPayload => 
       ]),
     geo: `POINT(${location.longitude} ${location.latitude})`,
     blockingAlertUuid: subtype === 'ACCIDENT_MAJOR' ? faker.string.uuid() : null,
-    tsInsert: now,
+    tsInsert: new Date(pubMillis).toISOString(),
   };
 };
 

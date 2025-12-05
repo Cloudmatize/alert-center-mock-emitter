@@ -44,9 +44,9 @@ export interface WazeAccidentPayload {
   pubMillis: number;
   ts: number;
   reportDescription: string;
-  geo: string;
+  geo: string; // Format: POINT(longitude latitude)
   blockingAlertUuid: string | null;
-  tsInsert: number;
+  tsInsert: string; // ISO 8601 format
 }
 
 export interface VideoAlertPayload {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import { AlertMap } from '@/components/alert-map';
 import { AlertHeader } from '@/components/alert-header';
-import { EndpointConfig } from '@/components/endpoint-config';
+import { TestModeConfig } from '@/components/endpoint-config';
 import { AlertTypeSelector } from '@/components/alert-type-selector';
 import { BehaviorTypeSelector } from '@/components/behavior-type-selector';
 import { AccidentSubtypeSelector } from '@/components/accident-subtype-selector';
@@ -22,8 +22,6 @@ export default function AlertForm() {
     setBehaviorType,
     accidentSubtype,
     setAccidentSubtype,
-    endpointUrl,
-    updateEndpointUrl,
     testMode,
     updateTestMode,
     generatePayload,
@@ -80,12 +78,10 @@ export default function AlertForm() {
         <div className={`grid grid-cols-1 gap-6 transition-all duration-500 ease-in-out ${showPayload ? 'lg:grid-cols-2' : 'lg:grid-cols-1 place-items-center'}`}>
           <div className={`rounded-xl shadow-2xl p-8 border w-full transition-all duration-500 ease-in-out ${!showPayload ? 'max-w-2xl' : ''} ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <EndpointConfig
+              <TestModeConfig
                 darkMode={darkMode}
                 testMode={testMode}
-                endpointUrl={endpointUrl}
                 onTestModeChange={updateTestMode}
-                onEndpointUrlChange={updateEndpointUrl}
               />
 
               <AlertTypeSelector
