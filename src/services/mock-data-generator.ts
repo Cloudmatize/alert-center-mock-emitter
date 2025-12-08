@@ -33,14 +33,14 @@ const generateLocation = (): Location => {
   const latOffset = (Math.random() - 0.5) * 0.02;
   const lngOffset = (Math.random() - 0.5) * 0.02;
 
-  const rua = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
-  const numero = faker.number.int({ min: 1, max: 999 });
-  const bairro = faker.helpers.arrayElement(SAO_CAETANO_NEIGHBORHOODS);
+  const street = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
+  const number = faker.number.int({ min: 1, max: 999 });
+  const neighborhood = faker.helpers.arrayElement(SAO_CAETANO_NEIGHBORHOODS);
 
   return {
-    latitude: SAO_CAETANO_CENTER.lat + latOffset,
-    longitude: SAO_CAETANO_CENTER.lng + lngOffset,
-    address: `${rua}, ${numero} - ${bairro}`,
+    latitude: parseFloat((SAO_CAETANO_CENTER.lat + latOffset).toFixed(6)),
+    longitude: parseFloat((SAO_CAETANO_CENTER.lng + lngOffset).toFixed(6)),
+    address: `${street}, ${number} - ${neighborhood}`,
     city: 'São Caetano do Sul',
     state: 'São Paulo',
   };
@@ -75,7 +75,9 @@ const generateVideoAlert = (policy: TrafficPolicy): VideoAlertPayload => {
 const generateWazeAccident = (): WazeAccidentPayload => {
   const location = generateLocation();
   const now = Date.now();
-  const pubMillis = now - 180000; // 3 minutos atrás (Precisa dos últimos minutos para parecer recente)
+  const hoursInMillis = 60 * 60 * 1000;
+  // const utc3h = hoursInMillis * 3;
+  const pubMillis = now - 180000  //  3 minutos atrás (Precisa dos últimos minutos para parecer recente) 
 
   const street = faker.helpers.arrayElement(SAO_CAETANO_STREETS);
   
@@ -96,7 +98,7 @@ const generateWazeAccident = (): WazeAccidentPayload => {
     reportRating: faker.number.int({ min: 5, max: 10 }), 
     reportByMunicipalityUser: faker.datatype.boolean(),
     pubMillis,
-    ts: pubMillis,
+    ts: new Date(pubMillis).toISOString(),
     reportDescription: randomSubtype === 'ACCIDENT_MAJOR'
       ? faker.helpers.arrayElement([
         'Acidente grave com vítimas',
@@ -108,7 +110,7 @@ const generateWazeAccident = (): WazeAccidentPayload => {
         'Acidente sem vítimas',
         'Veículos com danos leves'
       ]),
-    geo: `POINT(${location.longitude} ${location.latitude})`,
+    geo: `POINT (${location.longitude} ${location.latitude})`,
     blockingAlertUuid: randomSubtype === 'ACCIDENT_MAJOR' ? faker.string.uuid() : null,
     tsInsert: new Date(pubMillis).toISOString(),
   };

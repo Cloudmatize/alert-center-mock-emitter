@@ -31,8 +31,8 @@ export interface WazeAccidentPayload {
   reportRating: number;
   reportByMunicipalityUser: boolean;
   pubMillis: number;
-  ts: number;
-  reportDescription: string;
+  ts: string ; // ISO 8601 format
+  reportDescription: string | null;
   geo: string; // Format: POINT(longitude latitude)
   blockingAlertUuid: string | null;
   tsInsert: string; // ISO 8601 format

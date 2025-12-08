@@ -23,7 +23,7 @@ export const sendAlert = async (payload: AlertPayload, alertType: AlertType, end
     } else if (alertType === 'accident') {
       requestBody = {
         toTable: 'waze_alerts',
-        taskSource: 'waze',
+        taskSource: 'string',
         payload: [payload],
         actionOnDb: 'insert',
       };
